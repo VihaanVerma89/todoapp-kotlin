@@ -8,8 +8,12 @@ import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepo
  */
 
 class TasksPresenter(val tasksRepository: TasksRepository,
-                     val taskView: TasksContract.View)
+                     val tasksView: TasksContract.View)
     : TasksContract.Presenter {
+
+    init {
+        tasksView.presenter = this
+    }
     override fun openTaskDetails(compltedTask: Task) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -24,6 +28,10 @@ class TasksPresenter(val tasksRepository: TasksRepository,
 
     override fun start() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun addNewTask() {
+        tasksView.showAddTask()
     }
 
 }

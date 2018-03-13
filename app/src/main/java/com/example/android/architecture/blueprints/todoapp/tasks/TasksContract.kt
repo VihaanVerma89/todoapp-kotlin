@@ -8,6 +8,7 @@ import com.example.android.architecture.blueprints.todoapp.data.Task
 interface TasksContract{
 
     interface View : BaseView<Presenter>{
+        fun showAddTask()
 
     }
 
@@ -15,5 +16,6 @@ interface TasksContract{
         fun openTaskDetails(compltedTask: Task)
         fun activateTask(activatedTask: Task)
         fun completeTask(compltedTask: Task)
+        fun addNewTask()
     }
 }

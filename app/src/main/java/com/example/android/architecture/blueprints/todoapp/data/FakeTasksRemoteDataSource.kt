@@ -54,4 +54,118 @@ class FakeTasksRemoteDataSource private constructor(): TasksDataSource{
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    companion object {
+        private lateinit var INSTANCE: FakeTasksRemoteDataSource
+        private var needsNewInstance = true
+
+        @JvmStatic fun getInstance() : FakeTasksRemoteDataSource{
+            if(needsNewInstance)
+            {
+                INSTANCE = FakeTasksRemoteDataSource()
+                needsNewInstance = false
+            }
+            return INSTANCE
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

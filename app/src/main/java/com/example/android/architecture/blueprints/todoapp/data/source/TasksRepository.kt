@@ -19,7 +19,6 @@ class TasksRepository(val tasksRemoteDataSource: TasksDataSource, val tasksLocal
     }
 
     override fun saveTask(task: Task) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun completeTask(task: Task) {

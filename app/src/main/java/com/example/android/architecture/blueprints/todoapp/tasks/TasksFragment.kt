@@ -1,6 +1,8 @@
 package com.example.android.architecture.blueprints.todoapp.tasks
 
+import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +12,7 @@ import android.widget.CheckBox
 import android.widget.ListView
 import android.widget.TextView
 import com.example.android.architecture.blueprints.todoapp.R
-import com.example.android.architecture.blueprints.todoapp.ScrollChildSwipeRefreshLayout
+import com.example.android.architecture.blueprints.todoapp.addedittask.AddEditTaskActivity
 import com.example.android.architecture.blueprints.todoapp.data.Task
 
 /**
@@ -18,6 +20,7 @@ import com.example.android.architecture.blueprints.todoapp.data.Task
  */
 
 class TasksFragment : Fragment(), TasksContract.View {
+
     override lateinit var presenter: TasksContract.Presenter
 
     internal var itemListener: TaskItemListener = object :TaskItemListener{
@@ -45,11 +48,23 @@ class TasksFragment : Fragment(), TasksContract.View {
                 adapter = listAdapter
             }
 
-            findViewById<ScrollChildSwipeRefreshLayout>(R.id.refresh_layout).apply{
+            this?.findViewById<ScrollChildSwipeRefreshLayout>(R.id.refresh_layout).apply{
 
             }
         }
+
+        activity.findViewById<FloatingActionButton>(R.id.fab_add_task).apply {
+            setImageResource(R.drawable.ic_add)
+            setOnClickListener{ presenter.addNewTask() }
+        }
+
+        setHasOptionsMenu(true)
         return root
+    }
+
+    override fun showAddTask() {
+        val intent = Intent(context, AddEditTaskActivity::class.java)
+        startActivityForResult(intent, AddEditTaskActivity.REQUEST_ADD_TASK)
     }
 
     companion object {
