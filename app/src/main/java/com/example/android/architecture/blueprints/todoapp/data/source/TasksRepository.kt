@@ -10,6 +10,10 @@ import com.example.android.architecture.blueprints.todoapp.data.local.TasksLocal
 
 class TasksRepository(val tasksRemoteDataSource: TasksDataSource, val tasksLocalDataSource: TasksDataSource) : TasksDataSource {
 
+    var cachedTasks: LinkedHashMap<String, Task> = LinkedHashMap()
+    var cacheIsDirty = false
+
+
     override fun getTasks(callback: TasksDataSource.LoadTasksCallback) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -19,6 +23,10 @@ class TasksRepository(val tasksRemoteDataSource: TasksDataSource, val tasksLocal
     }
 
     override fun saveTask(task: Task) {
+        cacheAndPerform(task){
+            tasksRemoteDataSource.saveTask(it)
+            tasksLocalDataSource.saveTask(it)
+        }
     }
 
     override fun completeTask(task: Task) {
@@ -51,6 +59,14 @@ class TasksRepository(val tasksRemoteDataSource: TasksDataSource, val tasksLocal
 
     override fun deleteTask(taskId: String) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    private inline fun cacheAndPerform(task: Task, perform: (Task) -> Unit){
+        val cachedTask = Task(task.title, task.description, task.id).apply {
+            isCompleted = task.isCompleted
+        }
+        cachedTasks.put(cachedTask.id, cachedTask)
+        perform(cachedTask)
     }
 
 

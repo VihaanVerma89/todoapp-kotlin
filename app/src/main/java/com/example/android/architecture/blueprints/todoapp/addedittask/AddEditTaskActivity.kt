@@ -43,6 +43,11 @@ class AddEditTaskActivity : AppCompatActivity(){
 
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
+    }
+
     companion object {
         const val SHOULD_LOAD_DATA_FROM_REPO_KEY = "SHOULD_LOAD_DATA_FROM_REPO_KEY"
         const val REQUEST_ADD_TASK = 1

@@ -8,13 +8,15 @@ import com.example.android.architecture.blueprints.todoapp.util.AppExecutors
  * Created by vihaanverma on 07/03/18.
  */
 
-class TasksLocalDataSource private constructor(appExecutors: AppExecutors, tasksDao: TasksDao) : TasksDataSource {
+class TasksLocalDataSource private constructor(
+        val appExecutors: AppExecutors,
+        val tasksDao: TasksDao) : TasksDataSource {
     override fun getTask(taskId: String, callback: TasksDataSource.GetTaskCallback) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun saveTask(task: Task) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        appExecutors.diskIO.execute { tasksDao.insertTask(task) }
     }
 
     override fun completeTask(task: Task) {
