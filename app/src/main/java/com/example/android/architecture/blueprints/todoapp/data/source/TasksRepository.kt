@@ -15,7 +15,16 @@ class TasksRepository(val tasksRemoteDataSource: TasksDataSource, val tasksLocal
 
 
     override fun getTasks(callback: TasksDataSource.LoadTasksCallback) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        tasksLocalDataSource.getTasks(object : TasksDataSource.LoadTasksCallback {
+            override fun onTasksLoaded(tasks: List<Task>) {
+                callback.onTasksLoaded(tasks)
+            }
+
+            override fun onDataNotAvailable() {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+        })
+
     }
 
     override fun getTask(taskId: String, callback: TasksDataSource.GetTaskCallback) {
@@ -50,7 +59,6 @@ class TasksRepository(val tasksRemoteDataSource: TasksDataSource, val tasksLocal
     }
 
     override fun refreshTasks() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun deleteAllTasks() {

@@ -52,7 +52,18 @@ class TasksLocalDataSource private constructor(
     }
 
     override fun getTasks(callback: TasksDataSource.LoadTasksCallback) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        appExecutors.diskIO.execute {
+            val tasks = tasksDao.getTasks()
+            appExecutors.mainThread.execute{
+                if(tasks.isEmpty())
+                {
+                    callback.onDataNotAvailable()
+                }
+                else{
+                    callback.onTasksLoaded(tasks)
+                }
+            }
+        }
     }
 
     companion object {

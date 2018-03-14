@@ -4,13 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.BaseAdapter
-import android.widget.CheckBox
-import android.widget.ListView
-import android.widget.TextView
+import android.support.v4.content.ContextCompat
+import android.view.*
+import android.widget.*
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.addedittask.AddEditTaskActivity
 import com.example.android.architecture.blueprints.todoapp.data.Task
@@ -21,9 +17,24 @@ import com.example.android.architecture.blueprints.todoapp.data.Task
 
 class TasksFragment : Fragment(), TasksContract.View {
 
+    override var isActive: Boolean = false
+        get() = isAdded
+
+    private lateinit var noTaskView: View
+    private lateinit var noTaskIcon: ImageView
+    private lateinit var noTaskMainView: TextView
+    private lateinit var noTaskAddView: TextView
+    private lateinit var taskView: LinearLayout
+    private lateinit var filteringLableView: TextView
+
+
+    override fun setLoadingIndicator(active: Boolean) {
+
+    }
+
     override lateinit var presenter: TasksContract.Presenter
 
-    internal var itemListener: TaskItemListener = object :TaskItemListener{
+    internal var itemListener: TaskItemListener = object : TaskItemListener {
         override fun onCompleteTaskClick(compltedTask: Task) {
             presenter.completeTask(compltedTask)
         }
@@ -37,29 +48,68 @@ class TasksFragment : Fragment(), TasksContract.View {
         }
     }
 
-    private val listAdapter = TasksAdapter(ArrayList(0), itemListener )
+    private val listAdapter = TasksAdapter(ArrayList(0), itemListener)
 
+
+    override fun onResume() {
+        super.onResume()
+        presenter.start()
+    }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         val root = inflater?.inflate(R.layout.tasks_frag, container, false)
         with(root) {
-            val listview = this?.findViewById<ListView>(R.id.tasks_list)?.apply {
+            this!!
+            val listview = findViewById<ListView>(R.id.tasks_list)?.apply {
                 adapter = listAdapter
             }
 
-            this?.findViewById<ScrollChildSwipeRefreshLayout>(R.id.refresh_layout).apply{
-
+            findViewById<ScrollChildSwipeRefreshLayout>(R.id.refresh_layout).apply {
+                setColorSchemeColors(
+                        ContextCompat.getColor(activity, R.color.colorPrimary),
+                        ContextCompat.getColor(activity, R.color.colorAccent),
+                        ContextCompat.getColor(activity, R.color.colorPrimaryDark)
+                )
+               scrollUpChild = listview
+                setOnRefreshListener { presenter.loadTasks(false) }
             }
+
+            filteringLableView = findViewById(R.id.filteringLabel)
+            taskView = findViewById(R.id.tasksLL)
+            noTaskView = findViewById(R.id.noTasks)
+            noTaskIcon = findViewById(R.id.noTasksIcon)
+            noTaskMainView = findViewById(R.id.noTasksMain)
+            noTaskAddView = findViewById<TextView>(R.id.noTasksAdd).also {
+                it.setOnClickListener { showAddTask() }
+            }
+
         }
 
         activity.findViewById<FloatingActionButton>(R.id.fab_add_task).apply {
             setImageResource(R.drawable.ic_add)
-            setOnClickListener{ presenter.addNewTask() }
+            setOnClickListener { presenter.addNewTask() }
         }
 
         setHasOptionsMenu(true)
         return root
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.tasks_fragment_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.menu_clear -> presenter.clearCompletedTasks()
+            R.id.menu_filter -> showFilteringPopupMenu()
+            R.id.menu_refresh -> presenter.loadTasks(true)
+        }
+        return true
+    }
+
+    private fun showFilteringPopupMenu() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun showAddTask() {
@@ -118,10 +168,9 @@ class TasksFragment : Fragment(), TasksContract.View {
 
                 rowView.setBackgroundResource(rowViewBackground)
                 setOnClickListener {
-                    if(!task.isCompleted)
-                    {
+                    if (!task.isCompleted) {
                         itemListener.onCompleteTaskClick(task)
-                    }else{
+                    } else {
                         itemListener.onActivateTaskClick(task)
                     }
                 }
@@ -131,4 +180,26 @@ class TasksFragment : Fragment(), TasksContract.View {
         }
 
     }
+
+    override fun showNoActiveTasks() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun showNoCompletedTasks() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun showNoTask() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun showLoadingTasksError() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun showTasks(tasks: List<Task>) {
+        listAdapter.tasks = tasks
+    }
+
+
 }
